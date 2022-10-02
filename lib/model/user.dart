@@ -5,7 +5,7 @@ class User {
   static var lock = Lock();
   late String? name;
   late String? gender;
-  late String? token;
+  String token = 'default';
   late String? email;
   late int? id;
   late int? phoneNumber;
@@ -30,7 +30,7 @@ class User {
     setToken(user['api_token']);
   }
 
-  void setToken(String? token) {
+  void setToken(String token) {
     this.token = token;
   }
 

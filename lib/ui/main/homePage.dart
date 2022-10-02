@@ -22,13 +22,24 @@ class _HomePageState extends State<HomePage> {
     String? token = User.getInstance().token;
     var uri = Uri.http('192.168.1.106:8000', 'api/getpost');
     var response = await http.get(uri, headers: {'Authorization': 'Bearer $token'});
-    print(response.statusCode);
+    print('-----------------------------------------------');
+    print(response.body);
     List<dynamic> responseList = jsonDecode(response.body);
     setState(() {
+      int lastIndex = 0;
       responseList.forEach((element) {
         Post post = Post.empty();
-        post.fromJson(element);
-        postList.add(post);
+        int elementID = element['id'];
+        print('elementID: $elementID   lastIndex: $lastIndex');
+        if (element['id'] == lastIndex) {
+          postList.last.images.add(element['picture']);
+          lastIndex = elementID;
+        }else{
+          post.fromJson(element);
+          postList.add(post);
+          lastIndex = element['id'];
+        }
+
       });
     });
   }

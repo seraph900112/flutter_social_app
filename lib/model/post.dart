@@ -10,7 +10,7 @@ class Post {
   late int commentTimes;
   late int shareTimes;
   String? text;
-  List<ByteData>? images;
+  List<String> images = <String>[];
 
   Post(this.posterId, this.text, this.images, this.likeTimes, this.commentTimes) {
     hasText = true;
@@ -23,11 +23,6 @@ class Post {
     hasPhoto = false;
   }
 
-  Post.picture(this.posterId, this.images, this.likeTimes, this.commentTimes) {
-    hasText = false;
-    hasPhoto = true;
-  }
-
   void fromJson(Map<String, dynamic> json){
     id = json['id'];
     posterId = json['posterId'];
@@ -38,5 +33,9 @@ class Post {
     commentTimes = json['commentTimes'];
     shareTimes = json['shareTimes'];
     text = json['text'];
+    if(json['picture']!=null){
+      images.add(json['picture']);
+    }
+
   }
 }

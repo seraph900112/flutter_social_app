@@ -5,7 +5,7 @@ import 'package:sqlite_viewer/sqlite_viewer.dart';
 import '../../model/user.dart';
 
 class UserInfoPage extends StatefulWidget {
-  UserInfoPage({Key? key}) : super(key: key);
+  const UserInfoPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _UserInfoPageState();

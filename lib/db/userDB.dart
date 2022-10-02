@@ -31,32 +31,34 @@ class UserDB {
   Future<bool> verify(String username, String pwd) async {
     Database? db = await DBProvider.instance.db;
     debugPrint("$username, $pwd");
-    List<Map<String, dynamic>> res = await db!.query(tableName,
-        where: "$_uname = ? and $_pwd = ?", whereArgs: [username, pwd]);
+    List<Map<String, dynamic>> res =
+        await db!.query(tableName, where: "$_uname = ? and $_pwd = ?", whereArgs: [username, pwd]);
     debugPrint(res.toString());
     return res.isEmpty ? false : true;
   }
 
   Future<void> addToken(User user) async {
     Database? db = await DBProvider.instance.db;
-    int? count = Sqflite.firstIntValue(await db!
-        .rawQuery('SELECT COUNT(*) FROM User where id = ?', [user.id]));
+    int? count = Sqflite.firstIntValue(
+        await db!.rawQuery('SELECT COUNT(*) FROM User where id = ?', [user.id]));
     if (count == 0) {
       await db.rawDelete('DELETE FROM USER');
-      await db.rawInsert('INSERT INTO USER(id,name,api_token)VALUES(?,?,?)',
-          [user.id, user.name, user.token]);
+      await db.rawInsert(
+          'INSERT INTO USER(id,name,api_token)VALUES(?,?,?)', [user.id, user.name, user.token]);
     } else {
-      await db.rawQuery(
-          'UPDATE USER SET API_TOKEN=? WHERE ID = ?', [user.token, user.id]);
+      await db.rawQuery('UPDATE USER SET API_TOKEN=? WHERE ID = ?', [user.token, user.id]);
     }
   }
 
   Future<User> getUser() async {
     Database? db = await DBProvider.instance.db;
     User user = User.empty();
-    List<Map<String,dynamic>> map = await db!.query('User');
-    Map<String, dynamic> json = map.first;
-    user.formJson(json);
+    List<Map<String, dynamic>> map = await db!.query('User');
+    if (map.isNotEmpty) {
+      Map<String, dynamic> json = map.first;
+      user.formJson(json);
+    }
+
     return user;
   }
 }

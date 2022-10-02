@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../model/post.dart';
@@ -42,6 +44,24 @@ class _PostWidgetState extends State<PostWidget> {
                 Text(post.text!),
               ],
             ),
+            if (post.images.isNotEmpty) ...[
+              SizedBox(
+                height: 150,
+                child: GridView.builder(
+                  physics: MediaQuery.of(context).viewInsets.bottom != 0
+                      ? null
+                      : const NeverScrollableScrollPhysics(),
+                  itemCount: post.images.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3, crossAxisSpacing: 2, mainAxisSpacing: 2),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Image.memory(base64Decode(post.images[index]));
+                  },
+                ),
+              )
+            ] else ...[
+              const Text('noPicture')
+            ],
             const Divider(
               height: 10,
             ),

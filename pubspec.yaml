@@ -41,6 +41,8 @@ dependencies:
   crypto: ^3.0.2
   pusher_client: ^2.0.0
   laravel_echo: ^1.0.0-beta.1
+  photo_manager: ^2.3.0
+  multi_image_picker: ^4.6.1
 
 
 
