@@ -16,7 +16,6 @@ class _PostWidgetState extends State<PostWidget> {
   late Post post;
   bool like = false;
   int likeCount = 0;
-
   @override
   Widget build(BuildContext context) {
     post = widget.post;
@@ -46,16 +45,17 @@ class _PostWidgetState extends State<PostWidget> {
             ),
             if (post.images.isNotEmpty) ...[
               SizedBox(
-                height: 150,
+                height: 120 * post.images.length /3,
                 child: GridView.builder(
-                  physics: MediaQuery.of(context).viewInsets.bottom != 0
-                      ? null
-                      : const NeverScrollableScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: post.images.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3, crossAxisSpacing: 2, mainAxisSpacing: 2),
                   itemBuilder: (BuildContext context, int index) {
-                    return Image.memory(base64Decode(post.images[index]));
+                    return Image.memory(
+                      base64Decode(post.images[index]),
+                      fit: BoxFit.cover,
+                    );
                   },
                 ),
               )
@@ -110,35 +110,37 @@ class _PostWidgetState extends State<PostWidget> {
                     color: Colors.green,
                     width: 30,
                   ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        like = !like;
-                        if (like) {
-                          likeCount++;
-                        } else {
-                          likeCount--;
-                        }
-                      });
-                    },
-                    child: SizedBox(
-                      width: (MediaQuery.of(context).size.width - 90) / 3,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Icon(
-                            Icons.thumb_up,
-                            color: like ? Colors.orange : Colors.grey,
-                          ),
-                          Text(
-                            likeCount != 0 ? likeCount.toString() : "點讚",
-                            style: TextStyle(color: like ? Colors.orange : Colors.black),
-                          )
-                        ],
+                  StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          like = !like;
+                          if (like) {
+                            likeCount++;
+                          } else {
+                            likeCount--;
+                          }
+                        });
+                      },
+                      child: SizedBox(
+                        width: (MediaQuery.of(context).size.width - 90) / 3,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Icon(
+                              Icons.thumb_up,
+                              color: like ? Colors.orange : Colors.grey,
+                            ),
+                            Text(
+                              likeCount != 0 ? likeCount.toString() : "點讚",
+                              style: TextStyle(color: like ? Colors.orange : Colors.black),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  )
+                    );
+                  }),
                 ],
               ),
             ),
@@ -146,8 +148,4 @@ class _PostWidgetState extends State<PostWidget> {
         ));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import '../../model/user.dart';
 import '../../model/post.dart';
+import '../../util/const.dart';
 import '../../widget/postWidget.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> onRefresh() async {
     String? token = User.getInstance().token;
-    var uri = Uri.http('192.168.1.106:8000', 'api/getpost');
+    var uri = Uri.http(Const.url, 'api/getpost');
     var response = await http.get(uri, headers: {'Authorization': 'Bearer $token'});
     print('-----------------------------------------------');
     print(response.body);
@@ -34,12 +35,11 @@ class _HomePageState extends State<HomePage> {
         if (element['id'] == lastIndex) {
           postList.last.images.add(element['picture']);
           lastIndex = elementID;
-        }else{
+        } else {
           post.fromJson(element);
           postList.add(post);
           lastIndex = element['id'];
         }
-
       });
     });
   }

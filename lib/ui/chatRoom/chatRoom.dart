@@ -14,7 +14,9 @@ import '../../model/user.dart';
 import '../../util/const.dart';
 
 class ChatRoom extends StatefulWidget {
-  const ChatRoom({Key? key}) : super(key: key);
+  const ChatRoom({Key? key, required this.chatName, required this.chatId}) : super(key: key);
+  final String chatName;
+  final int chatId;
 
   @override
   State<StatefulWidget> createState() => _ChatRoomState();
@@ -25,52 +27,40 @@ class _ChatRoomState extends State<ChatRoom> {
   ScrollController controller = ScrollController();
   List<Chat> chatContent = <Chat>[];
 
-
   @override
   void initState() {
     super.initState();
     _textEditingController.text = "5168415";
-
-    print('456');
-  }
-  void webSockets(){
-    int? id = User.getInstance().id;
-    PusherOptions options = PusherOptions(
-      host: '192.168.1.106',
-      wsPort: 6001,
-      encrypted: false,
-    );
-    // Create pusher client
-    PusherClient pusherClient = PusherClient(
-      Const.PUSHER_KEY,
-      options,
-      autoConnect: false,
-      enableLogging: false,
-    );
-    // Create echo instance
-    Echo echo = Echo(
-      broadcaster: EchoBroadcasterType.Pusher,
-      client: pusherClient,
-    );
-    // Listening public channel
-    echo.channel('chat.$id').listen('Chat', (e) {
-      print(e.data);
-    });
-    // Accessing pusher instance
-    echo.connector.pusher.onConnectionStateChange((state) {
-      print(state!.currentState.toString());
-    });
+    getChat();
   }
 
   void showToast(String msg) {
     Fluttertoast.showToast(msg: msg);
   }
 
+  Future<void> getChat() async {
+    String? token = User
+        .getInstance()
+        .token;
+    int? id = User
+        .getInstance()
+        .id;
+    var uri = Uri.http(Const.url, 'api/getanchat',
+        {'sender_id': widget.chatId.toString(), 'receive_id': id.toString()});
+    var response = await http.get(uri, headers: {'Authorization': 'Bearer $token'});
+    print(response.body);
+    List<dynamic> responseList = jsonDecode(response.body);
+    setState(() {
+      responseList.forEach((element) {
+        chatContent.add(Chat.fromJson(element, element['sender_id'] == id));
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    webSockets();
     return Scaffold(
-      appBar: AppBar(title: const Text("HIII123")),
+      appBar: AppBar(title: Text(widget.chatName)),
       body: Stack(
         children: [
           Padding(
@@ -85,12 +75,9 @@ class _ChatRoomState extends State<ChatRoom> {
                       setState(() {
                         chatContent.insert(0, Chat(true, "text", message));
                       });
-                      var url = Uri.http('192.168.1.106:8000', 'api/chat');
-                      var response = await http.post(url, body: {
-                        'sender_id': '2',
-                        'receive_id': '2',
-                        'content': message
-                      });
+                      var url = Uri.http(Const.url, 'api/chat');
+                      var response = await http.post(url,
+                          body: {'sender_id': '2', 'receive_id': '2', 'content': message});
                       print(response.body);
                     },
                     actions: [
@@ -130,45 +117,52 @@ class _ChatRoomState extends State<ChatRoom> {
         reverse: true,
         itemCount: chatContent.length,
         itemBuilder: (BuildContext context, int index) {
-          return chatContent.elementAt(index).isSender
+          return chatContent
+              .elementAt(index)
+              .isSender
               ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (chatContent.elementAt(index).type == "text") ...[
-                      BubbleSpecialThree(
-                        text: chatContent.elementAt(index).content,
-                        color: const Color(0xFF1B97F3),
-                        isSender: chatContent.elementAt(index).isSender,
-                        tail: true,
-                        textStyle:
-                            const TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                      const CircleAvatar(
-                          backgroundImage:
-                              AssetImage("assets/images/Miko_2020.webp")),
-                    ]
-                  ],
-                )
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (chatContent
+                  .elementAt(index)
+                  .type == "text") ...[
+                BubbleSpecialThree(
+                  text: chatContent
+                      .elementAt(index)
+                      .content,
+                  color: const Color(0xFF1B97F3),
+                  isSender: chatContent
+                      .elementAt(index)
+                      .isSender,
+                  tail: true,
+                  textStyle: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                const CircleAvatar(
+                    backgroundImage: AssetImage("assets/images/Miko_2020.webp")),
+              ]
+            ],
+          )
               : Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const CircleAvatar(
-                        backgroundImage:
-                            AssetImage("assets/images/Miko_2020.webp")),
-                    BubbleSpecialThree(
-                      text: chatContent.elementAt(index).content,
-                      color: const Color(0xFF1B97F3),
-                      isSender: chatContent.elementAt(index).isSender,
-                      tail: true,
-                      textStyle:
-                          const TextStyle(color: Colors.white, fontSize: 16),
-                    )
-                  ],
-                );
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const CircleAvatar(backgroundImage: AssetImage("assets/images/Miko_2020.webp")),
+              BubbleSpecialThree(
+                text: chatContent
+                    .elementAt(index)
+                    .content,
+                color: const Color(0xFF1B97F3),
+                isSender: chatContent
+                    .elementAt(index)
+                    .isSender,
+                tail: true,
+                textStyle: const TextStyle(color: Colors.white, fontSize: 16),
+              )
+            ],
+          );
         },
       ),
     );

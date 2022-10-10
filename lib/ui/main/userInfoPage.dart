@@ -34,32 +34,51 @@ class _UserInfoPageState extends State<UserInfoPage> {
           ],
         ),
         InkWell(
-          onTap: (){
+          onTap: () {
             print("123");
           },
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              const CircleAvatar(
-                  backgroundImage: AssetImage("assets/images/Miko_2020.webp")),
+              const CircleAvatar(backgroundImage: AssetImage("assets/images/Miko_2020.webp"),),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  Text("UserName",style: TextStyle(color: Colors.black87,fontSize: 18,fontWeight: FontWeight.bold),),
-                  Text("Des:null",style: TextStyle(color: Colors.grey),)
+                  Text(
+                    "UserName",
+                    style:
+                        TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Des:null",
+                    style: TextStyle(color: Colors.grey),
+                  )
                 ],
               )
             ],
           ),
         ),
         Row(
-          children: [
-
-          ],
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [userInfo("Fans", 100), userInfo("Followers", 10), userInfo("posts", 5)],
         ),
-
       ],
+    );
+  }
+
+  Widget userInfo(String title, int count) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        children: [
+          Text(
+            count.toString(),
+            style: const TextStyle(fontSize: 20),
+          ),
+          Text(title, style: const TextStyle(fontSize: 16,color: Colors.grey),)
+        ],
+      ),
     );
   }
 }

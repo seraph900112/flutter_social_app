@@ -43,6 +43,8 @@ dependencies:
   laravel_echo: ^1.0.0-beta.1
   photo_manager: ^2.3.0
   multi_image_picker: ^4.6.1
+  thumbnailer: ^2.0.2
+
 
 
 

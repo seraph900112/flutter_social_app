@@ -10,6 +10,7 @@ import 'package:sqlite_viewer/sqlite_viewer.dart';
 import 'package:crypto/crypto.dart';
 
 import '../../model/user.dart';
+import '../../util/const.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -44,8 +45,8 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     User originUser = await viewModel.getUser();
-    var url = Uri.http('192.168.1.106:8000', 'api/login',
-        {'name': username, 'password': pwd, 'token': originUser.token});
+    var url = Uri.http(
+        '192.168.1.108:8000', 'api/login', {'name': username, 'password': pwd, 'token': originUser.token});
     var response = await http.get(url);
     print(response.body);
     Map<String, dynamic> userJson = jsonDecode(response.body);
@@ -53,11 +54,9 @@ class _LoginPageState extends State<LoginPage> {
       User user = User.getInstance();
       user.formJson(userJson);
       viewModel.addToken(user);
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => MainPage()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
     } else {
-      Fluttertoast.showToast(
-          msg: "Login Failed, Please check your name and pwd!");
+      Fluttertoast.showToast(msg: "Login Failed, Please check your name and pwd!");
     }
   }
 
@@ -70,8 +69,7 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Padding(
               padding: const EdgeInsets.fromLTRB(0, 80, 20, 0),
-              child: Image(
-                  image: Image.asset("assets/images/download.jpg").image)),
+              child: Image(image: Image.asset("assets/images/download.jpg").image)),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
             child: TextFormField(
@@ -80,18 +78,15 @@ class _LoginPageState extends State<LoginPage> {
                   filled: true,
                   fillColor: Colors.black12,
                   labelText: "Email",
-                  labelStyle: const TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black),
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                   hintText: "enter your email...",
                   hintStyle: const TextStyle(fontStyle: FontStyle.italic),
                   enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.black45, width: 1),
+                    borderSide: const BorderSide(color: Colors.black45, width: 1),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.black45, width: 1),
+                      borderSide: const BorderSide(color: Colors.black45, width: 1),
                       borderRadius: BorderRadius.circular(8.0)),
                   contentPadding: const EdgeInsets.fromLTRB(20, 24, 20, 24)),
             ),
@@ -105,22 +100,18 @@ class _LoginPageState extends State<LoginPage> {
                   filled: true,
                   fillColor: Colors.black12,
                   labelText: "Password",
-                  labelStyle: const TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black),
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                   hintText: "enter your password...",
                   enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.black45, width: 1),
+                    borderSide: const BorderSide(color: Colors.black45, width: 1),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.black45, width: 1),
+                      borderSide: const BorderSide(color: Colors.black45, width: 1),
                       borderRadius: BorderRadius.circular(8.0)),
                   suffixIcon: InkWell(
                     onTap: () => setState(() => hidePassword = !hidePassword),
-                    child: Icon(
-                        hidePassword ? Icons.visibility : Icons.visibility_off),
+                    child: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
                   ),
                   contentPadding: const EdgeInsets.fromLTRB(20, 24, 20, 24)),
             ),
@@ -131,8 +122,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(40, 20, 0, 0),
-                child: TextButton(
-                    onPressed: () {}, child: Text("Forgot Password?")),
+                child: TextButton(onPressed: () {}, child: Text("Forgot Password?")),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 20, 60, 0),
@@ -140,8 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     login(emailController?.text, pwdController?.text);
                   },
-                  style: ElevatedButton.styleFrom(
-                      onPrimary: Colors.amber, primary: Colors.blue),
+                  style: ElevatedButton.styleFrom(onPrimary: Colors.amber, primary: Colors.blue),
                   child: const Text("login"),
                 ),
               )
@@ -149,8 +138,8 @@ class _LoginPageState extends State<LoginPage> {
           ),
           Container(
             margin: const EdgeInsets.fromLTRB(40, 20, 40, 0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20), color: Colors.black12),
+            decoration:
+                BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.black12),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -165,8 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                         primary: Colors.transparent,
                         shadowColor: Colors.transparent,
                         onPrimary: Colors.black,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
                     onPressed: () {
                       login("123", "123");
                     },
